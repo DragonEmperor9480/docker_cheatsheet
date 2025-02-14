@@ -1,0 +1,80 @@
+docker --version // to check docker version
+docker run hello-world // to run an image in a container. if not present it will pull from docker hub
+docker run --name DragonEmperor9480 <image_name>// to specifically name a container
+docker run -it <image_name> //to run the docker container in interactive mode and terminal mode
+docker run -d <image_name> // run it in background
+docker attach <container_id> //attach back to container 
+docker run <image_name> sleep 100 // let the container run for specific time before it exits
+docker pull <container> //only pull the container not run it
+docker ps //list the running containers
+docker ps -a //list all the containers
+docker rm <container_id or name> //to remove the container
+docker images // to list all the images
+docker rmi <image_name> // delete the image
+docker run ubuntu cat /etc/*release* // run the command inside ubuntu like executing a single command
+docker run ubuntu 16:04 // here ":" is called a tag to use a specific version of a software
+docker log <container_id or name> // to check logs of a container
+docker stop <container_id> // to stop a running container
+docker inspect // to check information about docker container
+docker history
+docker build Dockerfile -t DragonEmperor/my-custom-app // cmd to build a custom docker image
+
+docker run --cpu=.5 ubuntu // dosent let the container take more than 50% of cpu
+docker run --memory=100m ubuntu //dosent let the container use more than 100MB
+docker volume create data_volume //creates a persistent volume where we can store data on the host machine
+
+docker run -v data_volume:/var/lib/mysql mysql //mounts the above created colume to container
+docker run -v /data/mysql:/var/lib/mysql mysql //can mount any dir by specifiying full name of it
+//the above command is old way the new way is as follows
+
+
+//the above two commands are old way the new command is as follows:
+docker run \ --mount type=bind,source=/data/mysql,target=/var/lib/mysql mysql
+
+--Storage Drivers
+AUFS
+ZFS
+BTRFS
+Device Manager
+Overlay
+Overlay2
+
+--DOCKER NETWORKS
+docker network ls // list the docker networks
+docker network inspect bridge // bridge here is the name of the network we are inspecting
+--Default Networks
+Bridge -> docker run ubuntu
+none-> docker run ubuntu --network=none
+host->docker run ubuntu --network=host
+
+--User-Defined Networks
+
+docker network create \
+	--driver bridge \
+	--subnet 182.18.0.0/16
+	custom-isolated-network
+
+--Example: Create a new network named wp-mysql-network using the bridge driver. Allocate subnet 182.18.0.0/24. Configure Gateway 182.18.0.1
+
+soln: docker network create --driver bridge --subnet 182.18.0.0/24 --gateway 182.18.0.1 wp-mysql-network
+
+Inspect the created network by docker network inspect wp-mysql-network
+
+--Example: Deploy a mysql database using the mysql:5.6 image and name it mysql-db. Attach it to the newly created network wp-mysql-network
+
+
+Set the database password to use db_pass123. The environment variable to set is MYSQL_ROOT_PASSWORD.
+
+soln: docker run --name mysql-db  -e MYSQL_ROOT_PASSWORD=db_pass123 --network wp-mysql-network mysql:5.6
+
+
+--Container Orchestration
+Container Orchestration allows you to run multiple thousands of instances in a single command. can also scale up and scale down based on the load.
+
+--Docker Swarm
+Combines multiple Docker machines together in a single cluster
+
+for swarm manager: docker swarm init
+for node worker: docker swarm join --token <token>
+
+docker service create --relicas=3 my-web-server
