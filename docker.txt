@@ -31,6 +31,14 @@ docker run -v /data/mysql:/var/lib/mysql mysql //can mount any dir by specifiyin
 //the above two commands are old way the new command is as follows:
 docker run \ --mount type=bind,source=/data/mysql,target=/var/lib/mysql mysql
 
+--Docker Storage
+the data of docker is stored in:
+/var/lib/docker:
+	-aufs
+	-containers
+	-image
+	-volumes
+
 --Storage Drivers
 AUFS
 ZFS
@@ -78,3 +86,52 @@ for swarm manager: docker swarm init
 for node worker: docker swarm join --token <token>
 
 docker service create --relicas=3 my-web-server
+
+we can have multiple manager nodes
+a single manager node can be allowed to make decisions, its called leader.
+
+--Raft  Consensys algorithm
+it uses random timers for initiating requests.
+the first one to finish the timer sends out a request, requesting permisson to be the leader.the other managers on reciving the request responmd with their role.
+then the leader is decided.
+
+--Quorum
+it is defined as the minimum number of members in assembly that must be present in any of the meeting.
+Formula: (N+1)/2 where N is number of managers.
+
+Fault Tolerance of N = (N-1)/2
+
+usually docker dosent recommend no more than 7 managers
+
+--Docker Compose
+https://docs.docker.com/compose/
+https://docs.docker.com/engine/reference/commandline/compose/
+https://github.com/dockersamples/example-voting-app
+
+--Docker Engiene
+it is referred to the host with Docker installed on it.
+mainly 3 components are installed
+-Docker CLI
+-Rest API
+-Docker Daemon
+
+
+Docker CLI can run on a different machine too,
+the command example for it is: docker -H=remote-docker-engiene:2375
+
+docker exec <container_id> ps -eaf // lists all the processes of that specific container
+
+--Docker Info
+docker info //lists all the information about the docker installed on the system
+docker info | more // lists more info on docker
+
+--Docker History
+If you would like to know how a docker image is built you can use following command.
+docker history <image_id>
+
+
+--Docker Service
+docker service ls // list the services
+docker service create --replicas 3 my-web-server
+docker service create --mode global my-antivirus
+docker service update <container_name> replicas 4 // increase replicas
